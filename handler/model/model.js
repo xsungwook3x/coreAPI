@@ -3,6 +3,52 @@ const autoIncrement = require('mongoose-auto-increment');
 
 autoIncrement.initialize(mongoose.connection);
 
+const userSchema = new mongoose.Schema({
+    role : {type : Number, enum : ['Teacher', 'Student']},
+    nick : {type : String,required: true, unique:true},
+    password : String,
+    name : String,
+    solved_problems : [Number],
+    phone: String,
+    belonged_classes : [String]
+});
+
+const classroomSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        maxlength: 30,
+        unique: 1
+    },
+    classroom_master: {
+        type: String,
+        required: true
+    },
+    class_id: {
+        type: String,
+        unique: 1
+    },
+    problem_list: [{
+        category: { type: String },
+        
+        problem_number: {
+                    type: Number,
+                    unique: true
+                },
+                problem_id: {//문제 아이디->problem schema
+                    type: String,
+                    required: true
+                }
+            
+    }],
+    user_list: {
+        type: Array,
+    },
+    request_student_list: {
+        type: Array,
+    }
+});
+
 const problemSchema = new mongoose.Schema({
     name: String,
     problem_description : String,
@@ -13,10 +59,7 @@ const problemSchema = new mongoose.Schema({
     solution : String,  //File 객체가 실제로 없는것으로 확인했습니다. 제 예전 프로젝트도 이 문제 때문에 우회했었네요.
     difficulty : Number,
     Category : [String],
-    problem_number: {
-        type: Number,
-        unique: true
-    },
+    problem_number: Number,
     input_list: [{_id: Number, txt: String}],
     output_list: [{_id: Number, txt: String}],
     spj: Boolean,
@@ -45,10 +88,10 @@ const judgeResultSchema = new mongoose.Schema({
     code: String,
     language: String,
     user_id: String,
-    user_nickname: String,
     problem_number: Number,
     ErrorMessage: String,
-    is_solution_provide : Boolean
+    is_solution_provide : Boolean,
+    belonged_classes:String
 });
 
 judgeResultSchema.plugin(autoIncrement.plugin, {
@@ -63,8 +106,11 @@ const judgeQueueSchema = new mongoose.Schema({
 });
 
 
+
 //참고로 몽구스는 model의 첫 번째 인자로 컬렉션 이름을 만듭니다. User이면 소문자화 후 복수형으로 바꿔서 users 컬렉션이 됩니다.
 module.exports = {
+    user : module.exports.user=mongoose.model('User',userSchema),
+    classroom : module.exports.classroom=mongoose.model('Classroom',classroomSchema),
     problem: module.exports.problem = mongoose.model('Problem', problemSchema),
     judge: module.exports.judge = mongoose.model('Judge', judgeResultSchema),
     judgeQueue: module.exports.judgeQueue = mongoose.model('JudgeQueue', judgeQueueSchema),
