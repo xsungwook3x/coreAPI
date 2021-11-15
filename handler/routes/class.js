@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Math = require('Math');
+// const Math = require('Math');
 
 //const jwt = require('jsonwebtoken');
 const model = require('../model/model.js');
@@ -93,3 +93,4 @@ router.get('/getClasses/student', function (req, res, next) {//학생이 참여�
 router.get('/getClasses/teacher', function (req, res, next) {
 
 })
+module.exports = router;
