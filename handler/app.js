@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
 const config = require('./config.js');
+const express= require('express');
+const app=express();
+const port = 5000;
+const bodyParser=require('body-parser');
 
-/* ---------
- mongoose connected */
+app.use(bodyParser.json());
 
 mongoose.connect(config.mongodbUri, {useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true });
 mongoose.Promise = global.Promise;
@@ -19,6 +22,19 @@ const Queue = new syncQueue();
 
 const pushQueue = require('./pushQueue');
 
+const assign =require('./routes/assign.js');
+const problem=require('./routes/problem.js');
+const register=require('./routes/register.js');
+const login=require('./routes/login.js');
+const classes =require('./routes/class.js');
+
+app.get('/',function(req,res) {res.send('hello')});
+app.use('/assign', assign);
+app.use('/problem',problem);
+app.use('/register',register);
+app.use('/login',login);
+app.use('/class',classes);
+
 setInterval(() => {
     model.judgeQueue.find()
         .where('server_number').equals(config.serverNumber)
@@ -31,3 +47,7 @@ setInterval(() => {
         }).catch(err => {
     });
 }, 5000);
+
+app.listen(port, () => {
+    console.log('server is running...');
+});
