@@ -77,26 +77,31 @@ getUsers = async (req, res) => {
 
 //로그인
 loginUser = async (req, res) => {
-    User.findOne({ nick: req.body.nick }, (err, user) => {
-        if (!user || err) {
-            return res.json({
-                loginSuccess: false,
-                message: "요청된 아이디에 해당하는 유저가 없습니다."
-            })
-        }
-        //비밀번호가 맞는지 확인 후 
-        user.comparePw(req.body.password, (err, isMatch) => {
-            if (!isMatch)
-                return res.json({ loginSuccess: false, message: "비밀번호가 틀렸습니다" })
-            //생성된 토큰을 쿠키에 저장
-            user.generateToken((err, user) => {
-                if (err) return res.status(400).send(err);
-                res.cookie("x_auth", user.token)
-                    .status(200)
-                    .json({ loginSuccess: true, userId: user._id })
-            })
-        })
-    })
+    const { nick, password } = req.body;
+
+    User.find()
+        .where('nick').equals(nick)
+        .then(result => {
+            if (result.length == 0) {
+                throw new Error('login-fail'); // 왜 로그인이 실패했는지 알려주면 보안상으로 안좋습니다.... 왜지..
+            }
+            const user_info = result[0];
+
+            if (password === user_info.password) {
+                res.status(200).json({ user_info });
+            }
+            else {
+                throw new Error('login-fail');
+            }
+        }).catch(err => {
+            if (err.message === 'login-fail') {
+                res.status(403).json({ message: 'login-fail' });
+            }
+            else {
+                console.log(err);
+                res.status(500).json({ message: 'server-error' });
+            }
+        });
 }
 getUser = (req, res) => {
     new Promise((resoleve, reject) => {
@@ -122,6 +127,7 @@ getUser = (req, res) => {
 module.exports = {
 
     createUser,
-    getUser
+    getUser,
+    loginUser
 
 }
