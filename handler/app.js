@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const config = require('./config.js');
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const port = 5000;
 const bodyParser = require('body-parser');
 
@@ -31,13 +32,22 @@ const classes = require('./routes/class.js');
 const userRouter = require('./routes/User-router');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-app.get('/', function (req, res) { res.send('hello') });
+app.use(
+    cors({
+        origin: ['http://localhost:3001'],
+        credentials: true,
+    }),
+);
+app.get('/', function (req, res) {
+    res.header("Access-Control-Aloow-Origin", "http://localhost:3001")
+    res.send('hello')
+});
 app.use('/assign', assign);
 app.use('/problem', problem);
 app.use('/register', register);
 app.use('/login', login);
 app.use('/class', classes);
+
 
 app.use('/user', userRouter);
 
