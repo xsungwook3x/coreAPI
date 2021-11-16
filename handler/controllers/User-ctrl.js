@@ -1,4 +1,5 @@
-const { User } = require('../model/model');
+const model = require('../model/model.js');
+const User = model.user;
 
 
 //회원가입
@@ -57,6 +58,7 @@ createUser = async (req, res) => {
 //로그인
 loginUser = async (req, res) => {
     const { nick, password, role } = req.query;
+    console.log(req.query)
 
 
     try {
@@ -94,8 +96,8 @@ loginUser = async (req, res) => {
 }
 //원하는 유저 한명가져오기 
 getUser = async (req, res) => {
-    const { nick } = req.params;
-    console.log(req.params);
+    const { nick } = req.query;
+    console.log(req);
     await User.findOne({ nick: nick }, (err, user) => {
         if (!user || err) {
             return res.json({

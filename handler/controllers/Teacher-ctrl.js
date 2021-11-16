@@ -1,4 +1,6 @@
-const { User } = require('../model/model');
+
+const model = require('../model/model.js');
+const User = model.user;
 
 
 
@@ -16,7 +18,7 @@ addClassroom = async (req, res) => {
         }
         let preClassroom = user.belonged_classes
         for (let index = 0; index < preClassroom.length; index++) {
-            if (preClassroom[index].class_id(body.classroom.class_id)) {
+            if (preClassroom[index].class_id(body.belonged_classes.class_id)) {
                 return res.status(200).json({
                     updateSuccess: false,
                     id: user._id,

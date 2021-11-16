@@ -1,6 +1,6 @@
 const express=require('express');
 const router=express.Router();
-
+const model=require('../model/model.js');
 const mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
@@ -15,7 +15,7 @@ router.post('/submitCode', (req, res, next) => {
         pending_date: Date.now(),//지금
         code: req.body.code,
         language: req.body.language,
-        user_id: req.body.uid,//>
+        user_id: req.body.nick,//>
         problem_number: req.body.problem_number,
         memory_usage: 0,
         time_usage: 0,
@@ -24,7 +24,7 @@ router.post('/submitCode', (req, res, next) => {
         belonged_classes:req.body.belonged_class
     };
 
-    model.user.findOne().where('uid').equals(req.body.uid).then(result => {
+    model.user.findOne().where('nick').equals(req.body.nick).then(result => {
         if(result === null) throw new Error('user-not-found');
         const save_judge_result = model.judge(judge_obj);
         return save_judge_result.save()
