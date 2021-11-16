@@ -77,7 +77,8 @@ getUsers = async (req, res) => {
 
 //로그인
 loginUser = async (req, res) => {
-    const { nick, password } = req.query;
+    const { nick, password, role } = req.query;
+
 
     try {
         let user = await User.findOne({ nick: nick })
@@ -91,9 +92,12 @@ loginUser = async (req, res) => {
             })
         }
         //비밀번호가 맞는지 확인 후 
-
         if (user.password != password)
             return res.json({ loginSuccess: false, message: "비밀번호가 틀렸습니다" })
+
+        if (user.role != role)
+            return res.json({ loginSuccess: false, message: "모드가 틀렸습니다" })
+
         //생성된 토큰을 쿠키에 저장
         user.generateToken((err, user) => {
             if (err) return res.status(400).send(err);
@@ -109,24 +113,21 @@ loginUser = async (req, res) => {
         });
     }
 }
-getUser = (req, res) => {
-    new Promise((resoleve, reject) => {
-        resoleve(User.findOne().where('uid').equals(req.body.uid));
-    }).then(result => {
-        if (result) throw new Error('already-register');
-    }).then(() => {
-        res.status(200).json({ message: 'good' });
-    }).catch(err => {
-        if (err.message === "already-register") {
-            /*--------------
-            TODO: email token 을 재발급 하는 기능을 만들어야 합니다. 이 부분에 대해서는 토론이 필요합니다. */
+getUser = async (req, res) => {
+    const { nick } = req.params;
 
-            res.status(403).json({ message: 'already-register' });
+    await User.findOne({ nick: nick }, (err, user) => {
+        if (!user || err) {
+            return res.json({
+                getSuccess: false,
+                message: "존재하지 않는 회원입니다",
+            })
         }
-        else {
-            res.status(500).json({ message: 'server-error' });
-        }
-    });
+        return res.json({
+            getSuccess: true,
+            data: user
+        })
+    }).catch(err => console.log(err))
 }
 
 

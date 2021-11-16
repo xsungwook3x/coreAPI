@@ -43,8 +43,10 @@ router.post('/addProblem', (req, res, next) => {
             newInputList[i] = {"_id" : i + 1, "txt": newInputList[i]};
             newOutputList[i] = {"_id" : i + 1, "txt": newOutputList[i]};
         }
+        const problem_id=Math.random().toString(36).substr(2,11);
         const addProblem = model.problem({
             name: req.body.name,
+            owner:req.body.owner,
             problem_description : req.body.problem_description,
             sample_input : req.body.sample_input,
             sample_output : req.body.sample_output,
@@ -55,30 +57,28 @@ router.post('/addProblem', (req, res, next) => {
             Category : newCategory,
             input_list: newInputList,
             output_list: newOutputList,
-            spj: req.body.spj,
-            spj_code: req.body.spj_code,
-            delete_yn : false,
+            problem_id:problem_id,
             memory_limit: parseInt(req.body.memory_limit) * 1024 * 1024,
             time_limit: parseInt(req.body.time_limit) * 1000
         });
 
-        const cpfile = function(filepath, filename, problem_number) {
+        const cpfile = function(filepath, filename, problem_id) {
             new Promise((resolve, reject) => {
-                fs.mkdir(path.join(__dirname, `../public/assets/${problem_number}/`), { recursive: true }, err => {
+                fs.mkdir(path.join(__dirname, `../public/assets/${problem_id}/`), { recursive: true }, err => {
                     if(err) reject(err);
                     else {
-                        fs.copyFile(filepath, path.join(__dirname, `../public/assets/${problem_number}/${filename}`), err => {
+                        fs.copyFile(filepath, path.join(__dirname, `../public/assets/${problem_id}/${filename}`), err => {
                             if (err) reject(err);
                             else {
                                 fs.unlink(filepath, err => {
                                     if (err) reject(err);
                                     else {
                                         if (filename.slice(-3) === 'pdf') {
-                                            model.problem.updateOne({problem_number: problem_number},
+                                            model.problem.updateOne({problem_id: problem_id},
                                                 {
                                                     $set: {
                                                         "solution":
-                                                            path.join(__dirname, `../../../public/assets/${problem_number}/${filename}`)
+                                                            path.join(__dirname, `../public/assets/${problem_id}/${filename}`)
                                                     }
                                                 }, {updated :true})
                                                 .then(result => {
@@ -102,7 +102,7 @@ router.post('/addProblem', (req, res, next) => {
         addProblem.save()
             .then(result => {
                 for(let i = 0; i < req.files.length; i++) {
-                    cpfile(req.files[i].path, req.files[i].filename, result.problem_number);
+                    cpfile(req.files[i].path, req.files[i].filename, result.problem_id);
                 }
                 res.status(200).json({message: "success"});
             }).catch(err => {
@@ -138,10 +138,10 @@ router.post('/updateProblem', (req, res, next) => {
 
         const cpfile = function(filepath, filename, problem_number) {
             new Promise((resolve, reject) => {
-                fs.mkdir(path.join(__dirname, `../../../public/assets/${problem_number}/`), { recursive: true }, err => {
+                fs.mkdir(path.join(__dirname, `../public/assets/${problem_number}/`), { recursive: true }, err => {
                     if(err) reject(err);
                     else {
-                        fs.copyFile(filepath, path.join(__dirname, `../../../public/assets/${problem_number}/${filename}`), err => {
+                        fs.copyFile(filepath, path.join(__dirname, `../public/assets/${problem_number}/${filename}`), err => {
                             if (err) reject(err);
                             else {
                                 fs.unlink(filepath, err => {
@@ -152,7 +152,7 @@ router.post('/updateProblem', (req, res, next) => {
                                                 {
                                                     $set: {
                                                         "solution":
-                                                            path.join(__dirname, `../../../public/assets/${problem_number}/${filename}`)
+                                                            path.join(__dirname, `../public/assets/${problem_number}/${filename}`)
                                                     }
                                                 }, {updated :true})
                                                 .then(result => {

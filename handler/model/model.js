@@ -51,6 +51,7 @@ const classroomSchema = new mongoose.Schema({
 
 const problemSchema = new mongoose.Schema({
     name: String,
+    owner:String,
     problem_description: String,
     sample_input: String,
     sample_output: String,
@@ -62,9 +63,7 @@ const problemSchema = new mongoose.Schema({
     problem_number: Number,
     input_list: [{ _id: Number, txt: String }],
     output_list: [{ _id: Number, txt: String }],
-    spj: Boolean,
-    spj_code: String,
-    delete_yn: Boolean,
+    problem_id:String,
     memory_limit: Number, // Please "Byte"
     time_limit: Number // Please "ms"
 });
