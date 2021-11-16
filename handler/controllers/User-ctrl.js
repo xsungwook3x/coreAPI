@@ -98,38 +98,30 @@ loginUser = async (req, res) => {
         })
     })
 }
-getUser = async (req, res) => {
-    await User.findOne({ id: req.body.id }, (err, user) => {
-        if (!user || err) {
-            return res.json({
-                getSuccess: false,
-                message: "존재하지 않는 회원입니다",
-            })
+getUser = (req, res) => {
+    new Promise((resoleve, reject) => {
+        resoleve(User.findOne().where('uid').equals(req.body.uid));
+    }).then(result => {
+        if (result) throw new Error('already-register');
+    }).then(() => {
+        res.status(200).json({ message: 'good' });
+    }).catch(err => {
+        if (err.message === "already-register") {
+            /*--------------
+            TODO: email token 을 재발급 하는 기능을 만들어야 합니다. 이 부분에 대해서는 토론이 필요합니다. */
+
+            res.status(403).json({ message: 'already-register' });
         }
-        return res.json({
-            getSuccess: true,
-            data: user
-        })
-    }).catch(err => console.log(err))
-}
-auth = (req, res) => {
-    res.status(200).json({
-        _id: req._id,
-        isAdmin: req.user.role === 09 ? false : true,
-        isAuth: true,
-        id: req.user.id,
-        name: req.user.name,
-        phone: req.user.phone,
-        part: req.user.part,
-        affiliation: req.user.affiliation,
-        classroom: req.user.classroom,
+        else {
+            res.status(500).json({ message: 'server-error' });
+        }
     });
 }
 
+
 module.exports = {
-    loginUser,
+
     createUser,
-    getUser,
-    getUsers,
-    auth
+    getUser
+
 }
