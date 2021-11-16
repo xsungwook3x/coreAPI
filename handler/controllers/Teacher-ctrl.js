@@ -1,4 +1,4 @@
-const User = require('../model/User-model');
+const { User } = require('../model/model');
 
 
 
@@ -6,7 +6,7 @@ addClassroom = async (req, res) => {
     const body = req.body
     try {
 
-        let user = await User.findOne({ id: body.id });
+        let user = await User.findOne({ nick: body.nick });
 
         if (!user) {
             return res.status(404).json({
@@ -14,7 +14,7 @@ addClassroom = async (req, res) => {
                 message: '선생님을 찾을 수 없습니다',
             })
         }
-        let preClassroom = user.classroom
+        let preClassroom = user.belonged_classes
         for (let index = 0; index < preClassroom.length; index++) {
             if (preClassroom[index].class_id(body.classroom.class_id)) {
                 return res.status(200).json({
@@ -26,8 +26,8 @@ addClassroom = async (req, res) => {
         }
         console.log("현재 " + preClassroom)
 
-        preClassroom.push(body.classroom);
-        user.classroom = preClassroom
+        preClassroom.push(body.belonged_classes);
+        user.belonged_classes = preClassroom
         user
             .save()
             .then(() => {

@@ -1,4 +1,4 @@
-const User = require('../model/User-model');
+const { User } = require('../model/model');
 
 
 //회원가입
@@ -12,6 +12,7 @@ createUser = async (req, res) => {
         role: req.body.role,
         solved_problems: [],
         phone: req.body.phone,
+        affiliation: req.body.affiliation,
         belonged_classes: []
     });
 
@@ -51,29 +52,7 @@ createUser = async (req, res) => {
 }
 
 
-//모든 유저 정보 가져오기
-getUsers = async (req, res) => {
-    await User.find({}, (err, users) => {
-        if (err) {
-            return res.json({
-                success: false,
-                error: err
-            })
-        }
 
-        if (!users.length) {
-            return res.json({
-                success: false,
-                error: 'Not user'
-            })
-        }
-
-        return res.status(200).json({
-            success: true,
-            data: users
-        })
-    }).catch(err => console.log(err))
-}
 
 //로그인
 loginUser = async (req, res) => {
@@ -113,9 +92,10 @@ loginUser = async (req, res) => {
         });
     }
 }
+//원하는 유저 한명가져오기 
 getUser = async (req, res) => {
     const { nick } = req.params;
-
+    console.log(req.params);
     await User.findOne({ nick: nick }, (err, user) => {
         if (!user || err) {
             return res.json({
@@ -137,4 +117,27 @@ module.exports = {
     getUser,
     loginUser
 
+}
+//모든 유저 정보 가져오기
+getUsers = async (req, res) => {
+    await User.find({}, (err, users) => {
+        if (err) {
+            return res.json({
+                success: false,
+                error: err
+            })
+        }
+
+        if (!users.length) {
+            return res.json({
+                success: false,
+                error: 'Not user'
+            })
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: users
+        })
+    }).catch(err => console.log(err))
 }

@@ -101,9 +101,9 @@ router.post('/addProblem', (req, res, next) => {
 
         addProblem.save()
             .then(result => {
-                for(let i = 0; i < req.files.length; i++) {
+                /*for(let i = 0; i < req.files.length; i++) {
                     cpfile(req.files[i].path, req.files[i].filename, result.problem_id);
-                }
+                }*/
                 res.status(200).json({message: "success"});
             }).catch(err => {
                 console.log(err);

@@ -1,4 +1,4 @@
-const Classroom = require('../models/Classroom-model');
+const { Classroom } = require('../model/model');
 
 createClassroom = async (req, res) => {
 

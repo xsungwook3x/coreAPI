@@ -30,6 +30,7 @@ const login = require('./routes/login.js');
 const classes = require('./routes/class.js');
 
 const userRouter = require('./routes/User-router');
+const teacherRouter = require('./routes/Teacher-router');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
@@ -50,6 +51,8 @@ app.use('/class', classes);
 
 
 app.use('/user', userRouter);
+app.use('/teacher', teacherRouter);
+
 
 
 setInterval(() => {
