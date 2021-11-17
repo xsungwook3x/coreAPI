@@ -1,23 +1,25 @@
-const { Classroom } = require('../model/model');
-
+const model = require('../model/model.js');
+const Classroom = model.classroom;
 createClassroom = async (req, res) => {
 
-    console.log(req.body.name);
-    console.log(req.body);
 
     try {
         const classroom = new Classroom({
             name: req.body.name,
             classroom_master: req.body.classroom_master,
             class_id: req.body.class_id,
+            user_list: [],
+            request_student_list: [],
+            problem_list: []
         });
+
         if (!classroom) {
             return res.status(400).json({
                 createClassroom: false,
                 message: '정보가 다 입력되지 않았습니다'
             })
         }
-        console.log(classroom)
+
 
         const existClassroom = await Classroom.find({ classroom_master: req.body.classroom_master });
 
@@ -30,9 +32,6 @@ createClassroom = async (req, res) => {
                 })
             }
         }
-
-
-
 
         if (classroom.name.length > 30) {
             return res.status(400).json({
@@ -52,9 +51,7 @@ createClassroom = async (req, res) => {
             })
             .catch((err) => {
                 return res.status(400).json({
-
                     data: err,
-
                     createClassroom: false,
                     message: '입력되지 않은 정보가 있습니다'
                 });
@@ -63,7 +60,7 @@ createClassroom = async (req, res) => {
 
 
     } catch (e) {
-
+        return;
     }
 
     return;
@@ -87,8 +84,6 @@ getStudentlist = async (req, res) => {
             message: '학생정보를 불러올수 없습니다'
         });
     }
-
-    return;
 
 }
 

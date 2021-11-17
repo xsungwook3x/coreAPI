@@ -15,8 +15,8 @@ router.post('/submitCode', (req, res, next) => {
         pending_date: Date.now(),//지금
         code: req.body.code,
         language: req.body.language,
-        user_id: req.body.nick,//>
-        problem_number: req.body.problem_number,
+        user_id: req.body.nick,
+        problem_id:req.body.problem_id,
         memory_usage: 0,
         time_usage: 0,
         ErrorMessage: '',

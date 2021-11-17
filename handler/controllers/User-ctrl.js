@@ -97,9 +97,9 @@ loginUser = async (req, res) => {
 //원하는 유저 한명가져오기 
 getUser = async (req, res) => {
     const { nick } = req.query;
-    console.log(req);
-    await User.findOne({ nick: nick }, (err, user) => {
-        if (!user || err) {
+    try {
+        let user = await User.findOne({ nick: nick })
+        if (!user) {
             return res.json({
                 getSuccess: false,
                 message: "존재하지 않는 회원입니다",
@@ -109,7 +109,10 @@ getUser = async (req, res) => {
             getSuccess: true,
             data: user
         })
-    }).catch(err => console.log(err))
+    } catch (err) {
+        return
+    }
+
 }
 
 

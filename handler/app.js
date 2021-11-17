@@ -35,12 +35,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
     cors({
-        origin: ['http://localhost:3001'],
+        origin: ['http://localhost:3000'],
         credentials: true,
     }),
 );
 app.get('/', function (req, res) {
-    res.header("Access-Control-Aloow-Origin", "http://localhost:3001")
+    res.header("Access-Control-Allow-Origin", "http://localhost:3000")
     res.send('hello')
 });
 app.use('/assign', assign);
@@ -60,7 +60,7 @@ setInterval(() => {
         .where('server_number').equals(config.serverNumber)
         .sort({ 'pending_number': 1 }).limit(1)
         .then(result => {
-            if (result.length == 0) throw new Error('no-judge-queue');
+            if (result.length === 0) throw new Error('no-judge-queue');
             pushQueue(Queue, result[0]);
             return model.judgeQueue.where('pending_number').equals(result[0].pending_number)
                 .deleteOne();

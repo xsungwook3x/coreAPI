@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     name: String,
     solved_problems: [Number],
     phone: String,
-    belonged_classes: [String],
+    belonged_classes: Array,
     affiliation: String,
     token: {
         type: String
@@ -81,7 +81,6 @@ const classroomSchema = new mongoose.Schema({
         type: String,
         required: true,
         maxlength: 30,
-        unique: 1
     },
     classroom_master: {
         type: String,
@@ -89,14 +88,17 @@ const classroomSchema = new mongoose.Schema({
     },
     class_id: {
         type: String,
-        unique: 1
+        unique: true,
+        required: true
+
     },
     problem_list: [{
         category: { type: String },
 
         problem_number: {
             type: Number,
-            unique: true
+
+
         },
         problem_id: {//문제 아이디->problem schema
             type: String,
@@ -151,6 +153,7 @@ const judgeResultSchema = new mongoose.Schema({
     language: String,
     user_id: String,
     problem_number: Number,
+    problem_id: String,
     ErrorMessage: String,
     is_solution_provide: Boolean,
     belonged_classes: String
