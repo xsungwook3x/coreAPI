@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     name: String,
     solved_problems: [Number],
     phone: String,
-    belonged_classes: Array,
+    belonged_classes: [{ title: String, class_id: String }],
     affiliation: String,
     token: {
         type: String
@@ -156,7 +156,8 @@ const judgeResultSchema = new mongoose.Schema({
     problem_id: String,
     ErrorMessage: String,
     is_solution_provide: Boolean,
-    belonged_classes: String
+    belonged_classes: String,
+    submit_id:{type:String, unique:true}
 });
 
 judgeResultSchema.plugin(autoIncrement.plugin, {

@@ -11,10 +11,9 @@ createUser = async (req, res) => {
         name: req.body.name,
         password: req.body.password,
         role: req.body.role,
-        solved_problems: [],
         phone: req.body.phone,
         affiliation: req.body.affiliation,
-        belonged_classes: []
+
     });
 
     if (!user) {
@@ -117,32 +116,31 @@ getUser = async (req, res) => {
 
 
 module.exports = {
-
     createUser,
     getUser,
     loginUser
 
 }
-//모든 유저 정보 가져오기
-getUsers = async (req, res) => {
-    await User.find({}, (err, users) => {
-        if (err) {
-            return res.json({
-                success: false,
-                error: err
-            })
-        }
+// //모든 유저 정보 가져오기
+// getUsers = async (req, res) => {
+//     await User.find({}, (err, users) => {
+//         if (err) {
+//             return res.json({
+//                 success: false,
+//                 error: err
+//             })
+//         }
 
-        if (!users.length) {
-            return res.json({
-                success: false,
-                error: 'Not user'
-            })
-        }
+//         if (!users.length) {
+//             return res.json({
+//                 success: false,
+//                 error: 'Not user'
+//             })
+//         }
 
-        return res.status(200).json({
-            success: true,
-            data: users
-        })
-    }).catch(err => console.log(err))
-}
+//         return res.status(200).json({
+//             success: true,
+//             data: users
+//         })
+//     }).catch(err => console.log(err))
+// }
