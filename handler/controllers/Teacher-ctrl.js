@@ -6,22 +6,24 @@ const User = model.user;
 
 
 addClassroom = async (req, res) => {
+    console.log(req.body);
 
     try {
         const body = req.body
         let user = await User.findOne({ nick: body.nick });
+        if (user == null) {
+            console.log(user);
 
-        if (!user) {
-            return res.status(404).json({
-                updateSuccess: err,
-                data: user,
-
+            return res.json({
+                updateSuccess: false,
                 message: '선생님을 찾을 수 없습니다',
             })
         }
+
+
         let preClassroom = user.belonged_classes
         for (let index = 0; index < preClassroom.length; index++) {
-            if (preClassroom[index][0] === (body.belonged_classes[0])) {
+            if (preClassroom[index].title === (body.belonged_classes[0].title)) {
                 return res.status(200).json({
                     updateSuccess: false,
                     id: user._id,
@@ -32,15 +34,19 @@ addClassroom = async (req, res) => {
             }
         }
 
-        preClassroom.push(body.belonged_classes);
-        user.belonged_classes = preClassroom
+        preClassroom.push(body.belonged_classes[0]);
+
         console.log(user.belonged_classes);
+        console.log("0000");
+        console.log(preClassroom);
+
+        user.belonged_classes = preClassroom
 
 
         user
             .save()
             .then(() => {
-                classroom.save();
+
                 return res.status(200).json({
                     updateSuccess: true,
                     id: user._id,

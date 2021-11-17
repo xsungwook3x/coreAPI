@@ -104,7 +104,7 @@ router.post('/addProblem', (req, res, next) => {
                 /*for(let i = 0; i < req.files.length; i++) {
                     cpfile(req.files[i].path, req.files[i].filename, result.problem_id);
                 }*/
-                res.status(200).json({message: "success"});
+                res.status(200).json({message: "success"},{problem_id:problem_id});
             }).catch(err => {
                 console.log(err);
                 res.status(500).json({message: "server-error"});
