@@ -111,30 +111,53 @@ router.get('/getClasses/teacher', function (req, res, next) {
 router.post('/addBelonged', function (req, res, next) {//클래스 가입하면 추가되는거 구현
     const user_nick = req.body.user_nick;
     const class_id = req.body.class_id;
-
-    model.user
-        .update(
-            { nick: user_nick },
-            { $push: { belonged_classes: class_id } })
-        .then(result => {
-            if (result === null) throw new Error('유저에추가실패');
-            model.classroom.
-                update(
+    model.classroom.findOneAndUpdate(
                     { class_id: class_id },
                     { $push: { user_list: user_nick } }
                 ).then(result => {
                     if (result === null) throw new Error('클래스에추가실패');
                     res.status(200).json({ message: '추가성공' });
-                })
+                }).catch(err => {
+                    if(err.message==='클래스에추가실패'){
+                        res.status(400).json({message:'클래스에 추가실패'})
+                    }else{
+                        res.status(500).json({ message: 'server-error' });
+                         console.log(err);
+                    }
+                });
+    /*model.user
+        .findOneAndUpdate(
+            { nick: user_nick },
+            { $push: { title:req.body.title,belonged_classes: class_id } })
+        .then(result => {
+            if (result === null) throw new Error('유저에추가실패');
+            
         }).catch(err => {
             if (err.message === '유저에추가실패') {
                 res.status(400).json({ message: '유저에추가실패' });
             } else {
                 res.status(500).json({ message: 'server-error' });
+                console.log(err);
             }
-        })
-
+        });*/
+        //이거 유저 토큰땜에 안들어가지는데 어캐해석해야하누...
 });
+
+router.post('/addProblem',function(req,res,next){//문제 추가
+    const class_id=req.body.class_id;
+    model.classroom.findOneAndUpdate({class_id:class_id},{$push:{problem_list:{problem_id:req.body.problem_id,problem_number:req.body.problem_number,category:req.body.category}}})
+    .then(result => {
+        if(result === null) throw new Error('클래스에 문제추가 실패');
+        res.status(200).json({message:'추가성공'});
+    }).catch(err => {
+        if(err.message === '클래스에 문제추가 실패'){
+            res.status(400).json({message:'클래스에 문제추가 실패'});
+        }else{
+            res.status(500).json({message:'server-error'});
+            console.log(err);
+        }
+    })
+})
 
 router.delete('/', function (req, res, next) {//삭제
     const class_id = req.body.class_id;

@@ -157,7 +157,7 @@ const judgeResultSchema = new mongoose.Schema({
     ErrorMessage: String,
     is_solution_provide: Boolean,
     belonged_classes: String,
-    submit_id:{type:String, unique:true}
+    submit_id: { type: String, unique: true }
 });
 
 judgeResultSchema.plugin(autoIncrement.plugin, {
@@ -172,20 +172,20 @@ const judgeQueueSchema = new mongoose.Schema({
 });
 
 const feedbackSchema = new mongoose.Schema({
-    nick:String,
-    posting_date:Date,
-    class_id:String,
-    problem_id:String,
-    title:String,
-    content:String,
-    answer:String,
-    feedback_number:Number
+    nick: String,
+    posting_date: Date,
+    class_id: String,
+    problem_id: String,
+    title: String,
+    content: String,
+    answer: String,
+    feedback_number: Number
 })
 
-feedbackSchema.plugin(autoIncrement.plugin,{
+feedbackSchema.plugin(autoIncrement.plugin, {
     model: 'feedback',
-    field:'feedback_number',
-    startAt:1000
+    field: 'feedback_number',
+    startAt: 1000
 });
 
 
@@ -197,5 +197,5 @@ module.exports = {
     problem: module.exports.problem = mongoose.model('Problem', problemSchema),
     judge: module.exports.judge = mongoose.model('Judge', judgeResultSchema),
     judgeQueue: module.exports.judgeQueue = mongoose.model('JudgeQueue', judgeQueueSchema),
-    feedback:module.exports.feedback=mongoose.model('Feedback',feedbackSchema)
+    feedback: module.exports.feedback = mongoose.model('Feedback', feedbackSchema)
 };

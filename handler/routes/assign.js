@@ -23,6 +23,7 @@ router.post('/submitCode', (req, res, next) => {
         ErrorMessage: '',
         is_solution_provide : false,
         belonged_classes:req.body.belonged_classes,
+        feedback:'',
         submit_id:submit_id
     };
 
@@ -65,6 +66,21 @@ router.get('/getResult',function(req,res,next){//결과값 찾아오기
     return;
 });
 
+router.post('/addFeedback',function(req,res,next){//코드에 피드백하기
+    model.judge.findOneAndUpdate({submit_id:req.body.submit_id},{$push:{feedback:req.body.feedback}})
+    .then(result => {
+        if(result === null) throw new Error('추가실패')
+        res.status(200).json({message:'추가성공'});
+        return;
+    }).catch(err => {
+        if(err.message === '추가실패') res.status(400).json({message:'추가실패'})
+        else{
+            res.status(500).json({message:'server-error'});
+            console.log(err);
+        }
+    })
+})
+
 router.get('/getAllResult',function(req,res,next){
     const nick =req.body.nick;
 
@@ -73,7 +89,7 @@ router.get('/getAllResult',function(req,res,next){
         res.status(200).json(result);
         return;
     }).catch(err => {
-        if(err.messate ==='result-not-found') res.status(404).json({message:'result-not-found'});
+        if(err.message ==='result-not-found') res.status(404).json({message:'result-not-found'});
         else {
             console.log(err);
             res.status(500).json('server-error');
