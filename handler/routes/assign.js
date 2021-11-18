@@ -22,7 +22,7 @@ router.post('/submitCode', (req, res, next) => {
         time_usage: 0,
         ErrorMessage: '',
         is_solution_provide : false,
-        belonged_classes:req.body.belonged_class,
+        belonged_classes:req.body.belonged_classes,
         submit_id:submit_id
     };
 
@@ -43,6 +43,7 @@ router.post('/submitCode', (req, res, next) => {
         if(err.message === 'user-not-found') res.status(404).json({message: 'user-not-found'});
         else res.status(500).json('server-error');
     });
+    return;
 });
 
 router.get('/getResult',function(req,res,next){//결과값 찾아오기 
@@ -52,6 +53,7 @@ router.get('/getResult',function(req,res,next){//결과값 찾아오기
     model.judge.findOne().where('submit_id').equals(submit_id).then(result => {
         if(result === null) throw new Error('result-not-found');
         res.status(200).json(result);
+        return;
     }).catch(err => {
         if(err.messate ==='result-not-found') res.status(404).json({message:'result-not-found'});
         else {
@@ -60,7 +62,58 @@ router.get('/getResult',function(req,res,next){//결과값 찾아오기
         }
     });
     
-
+    return;
 });
 
+router.get('/getAllResult',function(req,res,next){
+    const nick =req.body.nick;
+
+    model.judge.find().where('user_id').equals(nick).then( result => {
+        if(result === null) throw new Error('result-not-found');
+        res.status(200).json(result);
+        return;
+    }).catch(err => {
+        if(err.messate ==='result-not-found') res.status(404).json({message:'result-not-found'});
+        else {
+            console.log(err);
+            res.status(500).json('server-error');
+        }
+    });
+    return;
+});
+
+router.get('/getClassResult',function(req,res,next){
+    const class_name =req.body.class_name;
+
+    model.judge.find().where('belonged_classes').equals(class_name).then( result => {
+        if(result === null) throw new Error('result-not-found');
+        res.status(200).json(result);
+        return;
+    }).catch(err => {
+        if(err.messate ==='result-not-found') res.status(404).json({message:'result-not-found'});
+        else {
+            console.log(err);
+            res.status(500).json('server-error');
+        }
+    });
+    return;
+});
+
+router.get('/assignInClass',function(req,res,next){
+    const class_name=req.body.class_name;
+    const nick=req.body.nick;
+
+    model.judge.find({user_id:nick,belonged_classes:class_name}).then(result => {
+        if(result === null) throw new Error('result-not-found');
+        res.status(200).json(result);
+        return;
+    }).catch(err => {
+        if(err.messate ==='result-not-found') res.status(404).json({message:'result-not-found'});
+        else {
+            console.log(err);
+            res.status(500).json('server-error');
+        }
+    });
+    return;
+});
 module.exports = router;

@@ -130,7 +130,7 @@ const problemSchema = new mongoose.Schema({
     output_list: [{ _id: Number, txt: String }],
     problem_id: String,
     memory_limit: Number, // Please "Byte"
-    time_limit: Number // Please "ms"
+    time_limit: Number, // Please "ms"
 });
 
 problemSchema.plugin(autoIncrement.plugin, {
@@ -171,6 +171,23 @@ const judgeQueueSchema = new mongoose.Schema({
     pending_number: Number
 });
 
+const feedbackSchema = new mongoose.Schema({
+    nick:String,
+    posting_date:Date,
+    class_id:String,
+    problem_id:String,
+    title:String,
+    content:String,
+    answer:String,
+    feedback_number:Number
+})
+
+feedbackSchema.plugin(autoIncrement.plugin,{
+    model: 'feedback',
+    field:'feedback_number',
+    startAt:1000
+});
+
 
 
 //참고로 몽구스는 model의 첫 번째 인자로 컬렉션 이름을 만듭니다. User이면 소문자화 후 복수형으로 바꿔서 users 컬렉션이 됩니다.
@@ -180,4 +197,5 @@ module.exports = {
     problem: module.exports.problem = mongoose.model('Problem', problemSchema),
     judge: module.exports.judge = mongoose.model('Judge', judgeResultSchema),
     judgeQueue: module.exports.judgeQueue = mongoose.model('JudgeQueue', judgeQueueSchema),
+    feedback:module.exports.feedback=mongoose.model('Feedback',feedbackSchema)
 };

@@ -35,11 +35,6 @@ addClassroom = async (req, res) => {
         }
 
         preClassroom.push(body.belonged_classes[0]);
-
-        console.log(user.belonged_classes);
-        console.log("0000");
-        console.log(preClassroom);
-
         user.belonged_classes = preClassroom
 
 

@@ -97,7 +97,9 @@ loginUser = async (req, res) => {
 getUser = async (req, res) => {
     const { nick } = req.query;
     try {
+
         let user = await User.findOne({ nick: nick })
+        console.log(nick);
         if (!user) {
             return res.json({
                 getSuccess: false,

@@ -105,6 +105,7 @@ router.post('/addProblem', (req, res, next) => {
                     cpfile(req.files[i].path, req.files[i].filename, result.problem_id);
                 }*/
                 res.status(200).json({message: "success"},{problem_id:problem_id});
+                return;
             }).catch(err => {
                 console.log(err);
                 res.status(500).json({message: "server-error"});
@@ -173,7 +174,7 @@ router.post('/updateProblem', (req, res, next) => {
             });
         };
 
-        model.problem.findOne().where('problem_number').equals(req.body.problem_number)
+        model.problem.findOne().where('problem_id').equals(req.body.problem_id)
             .then(result => {
                 if(result === null) throw new Error('none-problem');
                 const io_length = result.input_list.length;
@@ -217,12 +218,13 @@ router.post('/updateProblem', (req, res, next) => {
                     changeObj.output_list.splice(-1);
                 }
 
-                return model.problem.updateOne({"problem_number": req.body.problem_number}, changeObj);
+                return model.problem.updateOne({"problem_id": req.body.problem_id}, changeObj);
             }).then(result => {
-                for(let i = 0; i < req.files.length; i++) {
+                /*for(let i = 0; i < req.files.length; i++) {
                     cpfile(req.files[i].path, req.files[i].filename, parseInt(req.body.problem_number));
-                }
+                }*/
                 res.status(200).json({message: "success"});
+                return;
             }).catch(result => {
                 console.log(err);
                 res.status(500).json({message: "server-error"});
@@ -230,14 +232,41 @@ router.post('/updateProblem', (req, res, next) => {
     });
 });
 
+router.get('/teacher',function(req,res,next){//문제 생성자 전체를  반환
+    const owner=req.body.owner;
+    model.problem.find({'owner':owner})
+    .then(result => {
+        if(result === null) throw new Error('not found');
+        res.status(200).json(result);
+        return;
+    }).catch(err => {
+        if(err === 'not found') res.status(404).json({message:'not found'})
+        else res.status(500).json({message:'server-error'})
+    });
 
-router.post('/deleteProblem/',function(req,res,next){
-    const problemnumber = req.body.problem_number;
-    model.problem.updateOne({problem_number : problemnumber},{delete_yn : true},{updated :true})
+});
+
+router.get('/',function(req,res,next){//클래스에서 문제 자세히 찾기
+    const problem_id=req.body.problem_id;
+    model.problem.findOne().where('problem_id').equals(problem_id)
+    .then(result => {
+        if(result === null) throw new Error('not found');
+        res.status(200).json(result);
+        return;
+    }).catch(err => {
+        if(err === 'not found') res.status(404).json({message:'not found'});
+        else res.status(500).json({message:'server-error'});
+    })
+})
+
+router.delete('/',function(req,res,next){
+    const problem_id= req.body.problem_id;
+    model.problem.updateOne({problem_id : problem_id},{delete_yn : true},{updated :true})
     .then(result => {
         if(result.nModified === 0) throw new Error('delete failure');
         if(result.n === 0) throw new Error('not found');
         res.status(200).json({message:'prboelm is deleted'});
+        return;
     }).catch( err =>{
         if(err.message === 'delete failure'){
             res.status(400).json({message:'delete failure'});

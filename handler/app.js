@@ -28,6 +28,7 @@ const problem = require('./routes/problem.js');
 const register = require('./routes/register.js');
 const login = require('./routes/login.js');
 const classes = require('./routes/class.js');
+const feedback=require('./routes/feedback.js');
 
 const userRouter = require('./routes/User-router');
 const teacherRouter = require('./routes/Teacher-router');
@@ -41,17 +42,17 @@ app.use(
 );
 app.get('/', function (req, res) {
     res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-    res.send('hello')
+    res.send('살려주세요ㅠㅠㅠ');
 });
-app.use('/assign', assign);
-app.use('/problem', problem);
-app.use('/register', register);
-app.use('/login', login);
-app.use('/class', classes);
+app.use('/api/assign', assign);
+app.use('/api/problem', problem);
+app.use('/api/register', register);
+app.use('/api/login', login);
+app.use('/api/class', classes);
+app.use('/api/feedback',feedback);
 
-
-app.use('/user', userRouter);
-app.use('/teacher', teacherRouter);
+app.use('/api/user', userRouter);
+app.use('/api/teacher', teacherRouter);
 
 
 
