@@ -58,7 +58,6 @@ router.get('/', function (req, res, next) {//클래스 정보가져오기
                     data: result.user_list
                 });
             }
-            return;
         }).catch(err => {
             if (err.message === 'Invalid-class') {
                 res.status(400).json({ message: 'Invalid-class' });
@@ -82,7 +81,6 @@ router.get('/getClasses/student', function (req, res, next) {//학생이 참여�
         else {
             res.status(200).json(result)
         }
-        return;
     }).catch(err => {
         if (err.message === 'no class') {
             res.status(400).json({ message: 'you dont have classes' });
@@ -101,7 +99,6 @@ router.get('/getClasses/teacher', function (req, res, next) {
         .then(result => {
             if (result === null) throw new Error('invalid classes');
             res.status(200).json(result)
-            return;
         }).catch(err => {
             if (err.message === 'invalid class') {
                 res.status(400).json({ message: 'there isnt classes' })
@@ -128,7 +125,6 @@ router.post('/addBelonged', function (req, res, next) {//클래스 가입하면 
                 ).then(result => {
                     if (result === null) throw new Error('클래스에추가실패');
                     res.status(200).json({ message: '추가성공' });
-                    return;
                 })
         }).catch(err => {
             if (err.message === '유저에추가실패') {
@@ -148,7 +144,6 @@ router.delete('/', function (req, res, next) {//삭제
         .then(result => {
             if (result === null) throw new Error('삭제 실패');
             res.status(200).json({ message: '삭제성공' });
-            return;
         }).catch(err => {
             if (err.message === '삭제 실패') {
                 res.status(400).json({ message: '삭제실패' });
