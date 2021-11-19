@@ -28,7 +28,7 @@ const problem = require('./routes/problem.js');
 const register = require('./routes/register.js');
 const login = require('./routes/login.js');
 const classes = require('./routes/class.js');
-const feedback=require('./routes/feedback.js');
+const feedback = require('./routes/feedback.js');
 
 const userRouter = require('./routes/User-router');
 const teacherRouter = require('./routes/Teacher-router');
@@ -36,12 +36,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
     cors({
-        origin: ['http://localhost:3000'],
+        origin: ['https://core.paas-ta.org'],
         credentials: true,
     }),
 );
 app.get('/', function (req, res) {
-    res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.header("Access-Control-Allow-Origin", "https://core.paas-ta.org");
     res.send('살려주세요ㅠㅠㅠ');
 });
 app.use('/api/assign', assign);
@@ -49,7 +49,7 @@ app.use('/api/problem', problem);
 app.use('/api/register', register);
 app.use('/api/login', login);
 app.use('/api/class', classes);
-app.use('/api/feedback',feedback);
+app.use('/api/feedback', feedback);
 
 app.use('/api/user', userRouter);
 app.use('/api/teacher', teacherRouter);
