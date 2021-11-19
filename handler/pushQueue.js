@@ -91,7 +91,7 @@ const pushQueue = function(Queue, judgeObj) {
                 user_code = result.code;
                 user_lang = result.language;
                 return model.problem.findOne()
-                    .where('problem_number').equals(result.problem_number);
+                    .where('problem_id').equals(result.problem_id);
             }).then(result => {
                 if(!result) throw new Error('none-problem');
                 if(Compiler[user_lang] === undefined) throw new Error('none-language');

@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const Math = require('Math');
 
 //const jwt = require('jsonwebtoken');
 const model = require('../model/model.js');
@@ -20,12 +19,12 @@ router.post('/addClass', function (req, res, next) {//클래스만들기
         .then(result => {
             if (result === null) throw new Error('invalid-user');
             if (result.role !== 1) throw new Error('role-auth-fail');
-
+            const classId = Math.random().toString(36).substr(2, 11);
             const save_classroom = model.classroom({
                 name: req.body.name,
                 classroom_master: user_id,
                 user_list: [],
-                class_id: Math.random().toString(36).substr(2, 11),
+                class_id: classId,
                 request_student_list: [],
                 problem_list: []
             });
@@ -47,14 +46,17 @@ router.post('/addClass', function (req, res, next) {//클래스만들기
 });
 
 router.get('/', function (req, res, next) {//클래스 정보가져오기
-    const class_id = req.body.class_id;
+    const class_id = req.query.class_id;
 
     model.classroom.findOne()
         .where('class_id').equals(class_id)
         .then(result => {
             if (result === null) throw new Error('Invalid-class');
             else {
-                res.status(200).json(result);
+                res.status(200).json({
+                    getUserSucess: true,
+                    data: result.user_list
+                });
             }
         }).catch(err => {
             if (err.message === 'Invalid-class') {
@@ -74,7 +76,6 @@ router.get('/getClasses/student', function (req, res, next) {//학생이 참여�
         "user_list": {
             $in: [user_nick]
         }
-
     }).then(result => {
         if (result === null) throw new Error('no class');
         else {
@@ -91,5 +92,88 @@ router.get('/getClasses/student', function (req, res, next) {//학생이 참여�
 });
 
 router.get('/getClasses/teacher', function (req, res, next) {
+    const user_nick = req.body.user_nick;
 
+    model.classroom.find()
+        .where('class_master').equals(user_nick)
+        .then(result => {
+            if (result === null) throw new Error('invalid classes');
+            res.status(200).json(result)
+        }).catch(err => {
+            if (err.message === 'invalid class') {
+                res.status(400).json({ message: 'there isnt classes' })
+            } else {
+                res.status(500).json({ message: 'server-error' });
+            }
+        })
 })
+
+router.post('/addBelonged', function (req, res, next) {//클래스 가입하면 추가되는거 구현
+    const user_nick = req.body.user_nick;
+    const class_id = req.body.class_id;
+    model.classroom.findOneAndUpdate(
+                    { class_id: class_id },
+                    { $push: { user_list: user_nick } }
+                ).then(result => {
+                    if (result === null) throw new Error('클래스에추가실패');
+                    res.status(200).json({ message: '추가성공' });
+                }).catch(err => {
+                    if(err.message==='클래스에추가실패'){
+                        res.status(400).json({message:'클래스에 추가실패'})
+                    }else{
+                        res.status(500).json({ message: 'server-error' });
+                         console.log(err);
+                    }
+                });
+    /*model.user
+        .findOneAndUpdate(
+            { nick: user_nick },
+            { $push: { title:req.body.title,belonged_classes: class_id } })
+        .then(result => {
+            if (result === null) throw new Error('유저에추가실패');
+            
+        }).catch(err => {
+            if (err.message === '유저에추가실패') {
+                res.status(400).json({ message: '유저에추가실패' });
+            } else {
+                res.status(500).json({ message: 'server-error' });
+                console.log(err);
+            }
+        });*/
+        //이거 유저 토큰땜에 안들어가지는데 어캐해석해야하누...
+});
+
+router.post('/addProblem',function(req,res,next){//문제 추가
+    const class_id=req.body.class_id;
+    model.classroom.findOneAndUpdate({class_id:class_id},{$push:{problem_list:{problem_id:req.body.problem_id,problem_number:req.body.problem_number,category:req.body.category}}})
+    .then(result => {
+        if(result === null) throw new Error('클래스에 문제추가 실패');
+        res.status(200).json({message:'추가성공'});
+    }).catch(err => {
+        if(err.message === '클래스에 문제추가 실패'){
+            res.status(400).json({message:'클래스에 문제추가 실패'});
+        }else{
+            res.status(500).json({message:'server-error'});
+            console.log(err);
+        }
+    })
+})
+
+router.delete('/', function (req, res, next) {//삭제
+    const class_id = req.body.class_id;
+
+    model.classroom.deleteOne()
+        .where('class_id').equals(class_id)
+        .then(result => {
+            if (result === null) throw new Error('삭제 실패');
+            res.status(200).json({ message: '삭제성공' });
+        }).catch(err => {
+            if (err.message === '삭제 실패') {
+                res.status(400).json({ message: '삭제실패' });
+            } else {
+                res.status(500).json({ message: 'server-error' });
+            }
+        })
+})
+
+module.exports = router;
