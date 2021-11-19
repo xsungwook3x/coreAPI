@@ -16,6 +16,7 @@
     "mongoose": "^5.7.5",
     "mongoose-auto-increment": "^5.0.1",
     "path": "^0.12.7",
+    "pm2": "^5.1.2",
     "sync-queue": "0.0.2"
   }
 }
