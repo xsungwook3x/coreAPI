@@ -39,6 +39,8 @@ router.post('/addProblem', (req, res, next) => {
         const newOutputList = [].concat(req.body.output_list);
         const newCategory = [].concat(req.body.Category);
 
+
+
         for (let i = 0; i < newInputList.length; i++) {
             newInputList[i] = { "_id": i + 1, "txt": newInputList[i] };
             newOutputList[i] = { "_id": i + 1, "txt": newOutputList[i] };
